@@ -29,7 +29,6 @@ def _check_old_logs():
     old_log_files = []
     today_log = RUN_DAY+'_myapp.log'
     for file in os.listdir('.'):
-        if fnmatch.fnmatch(file, '*sftp.log'):
             old_log_files.append(file)
 
     if today_log in old_log_files:
