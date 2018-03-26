@@ -1,7 +1,8 @@
 # utilities
 day to day utilities for data engineers
 
-my_sftp.py depends on config file SFTP_Config.ini
+my_sftp.py (depends on config file SFTP_Config.ini)
+--> uses Paramiko library for ssh-ftp
 --> After the configuration parameters are set, run the python script for fetching from and uploading files to ftp servers
 
 log_archive.py
