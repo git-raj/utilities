@@ -53,26 +53,22 @@ class SFTP(object):
         localpath = self.details['local_inbound']
 
         with self.get_ssh().open_sftp() as sftp:
-            file_list = [os.path.join(path, file) \
-                        for file in sftp.listdir(path)]
-            for file in file_list:
-                file_name = file.split(path)[1].replace('\\', '')
-                if os.path.exists(os.path.join(localpath, file_name)):
-                    print('{} has already been downloaded.'.format(file_name))
+            for file in sftp.listdir(path):
+                ftp_file_name = file.split(path)[1].replace('\\', '').replace('/', '') #just in case
+
+                if os.path.exists(os.path.join(localpath, ftp_file_name)):
+                    print('{} has already been downloaded.'.format(ftp_file_name))
                 else:
-                    sftp_file = file.split(path)[1]
-                    ftp_file = sftp_file.replace('/', '').replace('\\', '')
-                    win_format_file = localpath+ftp_file
-                    file1 = '/'+localpath+'/'+ftp_file
+                    local_file = os.path.join(localpath, ftp_file_name)
 
-                    print('Downloading file: {}'.format(ftp_file))
-                    sftp.get(file1, win_format_file)
+                    print('Downloading file: {}'.format(file))
+                    sftp.get(file, local_file)
 
-                    print('Download complete./n')
+                    print('Download complete.\n')
 
                     #delete file in server
-                    print('Deleting {} from server.'.format(file1))
-                    sftp.remove(file1)
+                    print('Deleting {} from server.'.format(file))
+                    sftp.remove(file)
 
 
     #core upload file process
@@ -81,18 +77,18 @@ class SFTP(object):
         uploads file via sftp
         '''
         localpath = self.details['local_outbound']
-        path = self.details['sftp_inbound']
+        ftp_path = self.details['sftp_inbound']
         with self.get_ssh().open_sftp() as sftp:
             file_list = [f for f in os.listdir(localpath) \
             if os.path.isfile(os.path.join(localpath, f))]
             for file in file_list:
                 file_loc = os.path.join(localpath, file)
-                file_ftp = path+file
+                file_ftp = os.path.join(ftp_path, file)
 
                 print('Uploading Local file: {} .'.format(file_loc))
 
                 sftp.put(file_loc, file_ftp)
-                print('Upload complete')
+                print('Upload complete.\n')
 
                 os.remove(file_loc)
                 print('Local file: {} deleted.'.format(file_loc))
